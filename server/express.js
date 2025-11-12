@@ -10,6 +10,7 @@ import usersRoutes from "./routes/usersRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import friendsRoutes from "./routes/friendsRoutes.js";
 import gamesRoutes from "./routes/gamesRoutes.js";
+import friendRequestRoutes from "./routes/friendRequestsRoutes.js";
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use("/api/users", usersRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/friends", friendsRoutes);
 app.use("/api/games", gamesRoutes);
+app.use("/api/friends/requests", friendRequestRoutes);
 
 // Health check
 app.get("/api/status", (req, res) => res.json({ ok: true }));
