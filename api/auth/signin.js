@@ -1,5 +1,5 @@
-import { connectDB } from "../../../server/db.js";
-import { signin } from "../../../server/controllers/authController.js";
+import { connectDB } from "../../server/db.js";
+import { signin } from "../../server/controllers/authController.js";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
