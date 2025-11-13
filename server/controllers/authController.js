@@ -28,7 +28,9 @@ export const signin = async (req, res) => {
 };
 
 export const signout = (req, res) => {
-  res.clearCookie('t');
+  if (typeof res.clearCookie === 'function') {
+    res.clearCookie('t');
+  }
   return res.status(200).json({ message: 'signed out' });
 };
 
