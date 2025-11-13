@@ -2,17 +2,6 @@
   "framework": "vite",
   "buildCommand": "npm --prefix client install && npm --prefix client run build",
   "outputDirectory": "client/dist",
-
-  "functions": {
-    "api/**": {
-      "runtime": "nodejs20.x"
-    }
-  },
-
-  "builds": [
-    { "src": "api/**/*.js", "use": "@vercel/node" }
-  ],
-
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
