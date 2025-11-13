@@ -13,7 +13,9 @@ export const signin = async (req, res) => {
     if (!ok) return res.status(401).json({ error: "Email and password don't match." });
 
     const token = jwt.sign({ _id: u._id }, config.jwtSecret);
-    res.cookie('t', token, { expire: new Date() + 9999 });
+    if (typeof res.cookie === 'function') {
+      res.cookie('t', token, { expire: new Date() + 9999 });
+    }
 
     return res.json({
       token,
