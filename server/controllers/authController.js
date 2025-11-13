@@ -13,19 +13,24 @@ export const signin = async (req, res) => {
     if (!ok) return res.status(401).json({ error: "Email and password don't match." });
 
     const token = jwt.sign({ _id: u._id }, config.jwtSecret);
-    res.cookie('t', token, { expire: new Date() + 9999 });
+    if (typeof res.cookie === 'function') {
+      res.cookie('t', token, { expire: new Date() + 9999 });
+    }
 
     return res.json({
       token,
       user: { _id: u._id, name: u.name, email: u.email }
     });
   } catch (err) {
+    console.error("Signin error:", err);  // <--- so you can see it in Vercel logs
     return res.status(401).json({ error: 'Could not sign in' });
   }
 };
 
 export const signout = (req, res) => {
-  res.clearCookie('t');
+  if (typeof res.clearCookie === 'function') {
+    res.clearCookie('t');
+  }
   return res.status(200).json({ message: 'signed out' });
 };
 
