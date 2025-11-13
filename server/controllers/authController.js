@@ -20,6 +20,7 @@ export const signin = async (req, res) => {
       user: { _id: u._id, name: u.name, email: u.email }
     });
   } catch (err) {
+    console.error("Signin error:", err);  // <--- so you can see it in Vercel logs
     return res.status(401).json({ error: 'Could not sign in' });
   }
 };
