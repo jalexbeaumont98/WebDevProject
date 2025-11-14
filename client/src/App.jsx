@@ -8,27 +8,6 @@ import Login from "./pages/Login";
 
 function App() {
   return (
-    <div className="main-content">
-      {/*<Navbar />    navbar component */}
-      {/*<ScrollToTop />   This resets scroll on route change */}
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/login" element={<Login />} />
-        {/* add more protected pages like above */}
-      </Routes>
-    </div>
-  )
-}
-
-function App() {
-  return (
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
