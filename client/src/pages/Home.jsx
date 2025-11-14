@@ -3,6 +3,16 @@ import { Link } from "react-router-dom"
 
 import { useAuth } from "../context/AuthContext";
 
+/*
+
+TODO
+
+Home page right now just shows your name and gives you a logout button, should probably a button to go to your most 
+recent active game or something.
+
+
+*/
+
 export default function Home() {
   const { auth, signout } = useAuth();
   return (
