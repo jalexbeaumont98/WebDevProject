@@ -11,6 +11,7 @@
 TODO
 
 Create a flow where you can make a game using a list of your friends instead of manually entering their mongo_id.
+also make it so it shows who your oppenent is (displayname)
 
 */
 

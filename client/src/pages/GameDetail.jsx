@@ -11,6 +11,12 @@
 //   await setSecret(auth.token, gameId, 42);
 //   const { result, game } = await makeGuess(auth.token, gameId, 17);
 
+/*
+
+    TODO   add oppenent display name 
+
+*/
+
 import { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
