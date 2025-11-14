@@ -2,6 +2,8 @@ import { connectDB } from "../../../server/db.js";
 import {
   listMine,
   createOne,
+  updateStatus,
+  removeById
 } from "../../../server/controllers/friendRequestsController.js";
 import { attachAuthFromHeader } from "../../_authFromHeader.js";
 
@@ -22,6 +24,31 @@ export default async function handler(req, res) {
   if (req.method === "POST") {
     // create a new friend request from req.auth._id → toUserId
     return createOne(req, res, console.error);
+    
+  }
+
+  if (req.method === "PUT") {
+    // Update status of a request (accept/decline)
+    // body: { requestId, action: 'accept' | 'decline' }
+    const { requestId, action } = req.body;
+    if (!requestId || !action) {
+      return res.status(400).json({ error: "requestId and action are required" });
+    }
+    req.params = req.params || {};
+    req.params.id = requestId;
+    return handleController(updateStatus, req, res);
+  }
+  
+  if (req.method === "DELETE") {
+    // Delete a request
+    // body: { requestId }
+    const { requestId } = req.body;
+    if (!requestId) {
+      return res.status(400).json({ error: "requestId is required" });
+    }
+    req.params = req.params || {};
+    req.params.id = requestId;
+    return handleController(removeById, req, res);
   }
 
   return res.status(405).json({ error: "Method not allowed" });
