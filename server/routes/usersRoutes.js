@@ -26,12 +26,6 @@ router.put('/:id', updateById);
 router.delete('/:id', removeById);
 router.delete('/', removeAll);
 
-/**
- * Auth-friendly endpoints
- * - POST /api/users/signup  → hashed-password creation (registerUser)
- * - GET  /api/users/profile/:userId → protected read of own profile
- */
-router.post('/signup', registerUser);
 router.get('/profile/:userId', requireSignin, hasAuthorization, read);
 
 /** Bind :userId for the profile route */
