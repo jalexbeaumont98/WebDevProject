@@ -136,13 +136,13 @@ export const setSecret = async (req, res, next) => {
       if (game.hasSecretA) {
         return res.status(400).json({ message: 'Secret already set' });
       }
-      game.secretA = secret;
+      game.secretA = num;
       game.hasSecretA = true;
     } else {
       if (game.hasSecretB) {
         return res.status(400).json({ message: 'Secret already set' });
       }
-      game.secretB = secret;
+      game.secretB = num;
       game.hasSecretB = true;
     }
 
@@ -170,22 +170,21 @@ export const makeGuess = async (req, res, next) => {
   try {
     const userId = req.auth._id;
 
-    let { value } = req.body;
-
     // Coerce to number
-    const num = Number(value);
+    const raw = req.body.value ?? req.body.guess;
+
+    const num = Number(raw);
 
     if (!Number.isInteger(num)) {
       return res
         .status(400)
-        .json({ message: 'Secret value must be a number' });
+        .json({ message: 'Guess must be a number' });
     }
 
-    
     if (num < 1 || num > 100) {
       return res
         .status(400)
-        .json({ message: 'Secret must be between 1 and 100' });
+        .json({ message: 'Guess must be between 1 and 100' });
     }
 
     const game = await Game.findById(req.params.id);
@@ -212,14 +211,14 @@ export const makeGuess = async (req, res, next) => {
     const targetSecret = isA ? game.secretB : game.secretA;
 
     let result;
-    if (value < targetSecret) result = 'low';
-    else if (value > targetSecret) result = 'high';
+    if (num < targetSecret) result = 'low';
+    else if (num > targetSecret) result = 'high';
     else result = 'correct';
 
     game.guesses.push({
       player: userId,
       target: targetId,
-      value,
+      num,
       result
     });
 
