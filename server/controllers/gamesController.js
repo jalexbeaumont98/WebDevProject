@@ -222,7 +222,7 @@ export const makeGuess = async (req, res, next) => {
     game.guesses.push({
       player: userId,
       target: targetId,
-      num,
+      value: num,
       result
     });
 
