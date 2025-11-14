@@ -95,12 +95,22 @@ export const acceptGame = async (req, res, next) => {
 export const setSecret = async (req, res, next) => {
   try {
     const userId = req.auth._id;
-    const { value } = req.body;
+    let { secret } = req.body;
 
-    if (typeof value !== 'number') {
+    // Coerce to number
+    const num = Number(secret);
+
+    if (!Number.isInteger(num)) {
       return res
         .status(400)
         .json({ message: 'Secret value must be a number' });
+    }
+
+    // Optional: validate range
+    if (num < 1 || num > 100) {
+      return res
+        .status(400)
+        .json({ message: 'Secret must be between 1 and 100' });
     }
 
     const game = await Game.findById(req.params.id);
@@ -126,13 +136,13 @@ export const setSecret = async (req, res, next) => {
       if (game.hasSecretA) {
         return res.status(400).json({ message: 'Secret already set' });
       }
-      game.secretA = value;
+      game.secretA = secret;
       game.hasSecretA = true;
     } else {
       if (game.hasSecretB) {
         return res.status(400).json({ message: 'Secret already set' });
       }
-      game.secretB = value;
+      game.secretB = secret;
       game.hasSecretB = true;
     }
 
