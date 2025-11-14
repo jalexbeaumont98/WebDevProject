@@ -7,6 +7,15 @@ import {
 } from "../../../server/controllers/friendRequestsController.js";
 import { attachAuthFromHeader } from "../../_authFromHeader.js";
 
+function handleController(controller, req, res) {
+  return controller(req, res, (err) => {
+    console.error("FriendRequests controller error:", err);
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Server error in friend requests" });
+    }
+  });
+}
+
 export default async function handler(req, res) {
   const uri = process.env.MONGO_URI;
   if (!uri) return res.status(500).json({ error: "MONGO_URI not set" });
@@ -17,14 +26,14 @@ export default async function handler(req, res) {
   await connectDB(uri);
 
   if (req.method === "GET") {
-    // list friend requests where I'm either fromUserId or toUserId
-    return listMine(req, res, console.error);
+    // List all requests involving the current user
+    return handleController(listMine, req, res);
   }
 
   if (req.method === "POST") {
-    // create a new friend request from req.auth._id → toUserId
-    return createOne(req, res, console.error);
-    
+    // Create a new friend request
+    // body: { toUserId }
+    return handleController(createOne, req, res);
   }
 
   if (req.method === "PUT") {
@@ -38,7 +47,7 @@ export default async function handler(req, res) {
     req.params.id = requestId;
     return handleController(updateStatus, req, res);
   }
-  
+
   if (req.method === "DELETE") {
     // Delete a request
     // body: { requestId }
