@@ -1,32 +1,41 @@
-import { Routes, Route } from "react-router-dom"
-import Navbar from "./components/Navbar.jsx"
-import ScrollToTop from "./components/ScrollToTop"
-import ProtectedRoute from "./routes/ProtectedRoute.jsx";
+import Layout from "./components/Layout";
+import Navbar from "./components/Navbar";
+import ScrollToTop from "./components/ScrollToTop";
+import ProtectedRoute from "./routes/ProtectedRoute";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-
+import Signup from "./pages/Signup";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+    <>
+      <Navbar />
+      <ScrollToTop />
 
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
+      <Layout>
+        <Routes>
 
-        <Route path="/" element={<Home />} />
-      </Routes>
-    </Router>
+          {/* public */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+
+          {/* protected */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Layout>
+    </>
   );
 }
 
-
-export default App
+export default App;
