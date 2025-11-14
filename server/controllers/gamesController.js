@@ -106,7 +106,7 @@ export const setSecret = async (req, res, next) => {
         .json({ message: 'Secret value must be a number' });
     }
 
-    // Optional: validate range
+    
     if (num < 1 || num > 100) {
       return res
         .status(400)
@@ -169,12 +169,23 @@ export const setSecret = async (req, res, next) => {
 export const makeGuess = async (req, res, next) => {
   try {
     const userId = req.auth._id;
-    const { value } = req.body;
 
-    if (typeof value !== 'number') {
+    let { value } = req.body;
+
+    // Coerce to number
+    const num = Number(value);
+
+    if (!Number.isInteger(num)) {
       return res
         .status(400)
-        .json({ message: 'Guess value must be a number' });
+        .json({ message: 'Secret value must be a number' });
+    }
+
+    
+    if (num < 1 || num > 100) {
+      return res
+        .status(400)
+        .json({ message: 'Secret must be between 1 and 100' });
     }
 
     const game = await Game.findById(req.params.id);
