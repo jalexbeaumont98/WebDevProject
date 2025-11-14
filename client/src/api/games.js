@@ -104,11 +104,11 @@ export async function setSecret(token, gameId, secret) {
  * Example:
  *   const { result, game } = await makeGuess(auth.token, gameId, 42);
  */
-export async function makeGuess(token, gameId, guess) {
+export async function makeGuess(token, gameId, value) {
   const res = await fetch(`${API_BASE}/api/games/${gameId}/guess`, {
     method: "POST",
     headers: authHeaders(token),
-    body: JSON.stringify({ guess }),
+    body: JSON.stringify({ value }),
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));

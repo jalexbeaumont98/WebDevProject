@@ -8,6 +8,7 @@ import Signup from "./pages/Signup";
 import FriendsPage from "./pages/Friends.jsx";
 import GamesPage from "./pages/Games.jsx";
 import GameDetailPage from "./pages/GameDetail.jsx";
+import Profile from "./pages/Profile.jsx";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 function App() {
@@ -47,6 +48,15 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
         
           {/* protected */}
           <Route
@@ -57,6 +67,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+
           
 
           {/* fallback */}

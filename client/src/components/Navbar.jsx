@@ -35,6 +35,9 @@ export default function Navbar() {
             <NavLink to="/games" className="nav-link">
               Games
             </NavLink>
+            <NavLink to="/profile" className="nav-link">
+              Profile
+            </NavLink>
           </>
         )}
       </div>
