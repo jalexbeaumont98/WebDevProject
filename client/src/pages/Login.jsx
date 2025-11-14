@@ -1,55 +1,70 @@
-import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../auth/AuthContext";
+// client/src/pages/Login.jsx
+import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { login } from '../api/auth';
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [err, setErr] = useState("");
+  const [email,    setEmail]    = useState('');
+  const [password, setPassword] = useState('');
+  const [error,    setError]    = useState('');
+  const [loading,  setLoading]  = useState(false);
+
   const navigate = useNavigate();
-  const location = useLocation();
-  const { signin } = useAuth();
 
-  const from = location.state?.from?.pathname || "/";
-
-  const onSubmit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
-    setErr("");
+    setError('');
+    setLoading(true);
+
     try {
-      await signin(email, password);
-      navigate(from, { replace: true });
-    } catch (e) {
-      setErr(e.message || "Login failed");
+      const data = await login({ email, password });
+      // store token if you’re doing that in localStorage/context
+      // localStorage.setItem('token', data.token);
+      navigate('/'); // or wherever your home is
+    } catch (err) {
+      setError(err.message || 'Failed to sign in');
+    } finally {
+      setLoading(false);
     }
-  };
+  }
 
   return (
-    <div style={{ maxWidth: 420, margin: "80px auto", padding: 16 }}>
-      <h1>Sign in</h1>
-      <form onSubmit={onSubmit} style={{ display: "grid", gap: 12 }}>
+    <div className="auth-page">
+      <h1>Sign In</h1>
+
+      <form className="auth-form" onSubmit={handleSubmit}>
         <label>
           Email
           <input
             type="email"
             value={email}
-            onChange={e=>setEmail(e.target.value)}
+            onChange={e => setEmail(e.target.value)}
             required
-            style={{ width: "100%" }}
           />
         </label>
+
         <label>
           Password
           <input
             type="password"
             value={password}
-            onChange={e=>setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
             required
-            style={{ width: "100%" }}
           />
         </label>
-        {err && <div style={{ color: "crimson" }}>{err}</div>}
-        <button type="submit">Log In</button>
+
+        {error && <p className="auth-error">{error}</p>}
+
+        <button type="submit" disabled={loading}>
+          {loading ? 'Signing in…' : 'Sign In'}
+        </button>
       </form>
+
+      {/* 👇 New bit */}
+      <p className="auth-switch">
+        Don&apos;t have an account?{' '}
+        <Link to="/signup">Sign up!</Link>
+      </p>
     </div>
   );
 }
