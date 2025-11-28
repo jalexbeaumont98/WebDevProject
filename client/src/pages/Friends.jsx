@@ -20,6 +20,10 @@ import {
 export default function FriendsPage() {
   const { auth } = useAuth();
   const token = auth?.token;
+  const currentUserId = auth?.user?._id;
+
+  // Handles either an id string OR a populated object like { _id: "..." }
+  const idOf = (v) => (v && typeof v === "object" ? v._id : v);
 
   const [friends, setFriends] = useState([]);
   const [requests, setRequests] = useState([]);
@@ -82,7 +86,7 @@ export default function FriendsPage() {
       setFriends(friendsData.friends || []);
       setRequests(requestsData || []);
     } catch (err) {
-      setError(err.message || "Failed to update request");
+      setError(err.message || "Failed to update friend request");
     } finally {
       setLoading(false);
     }
@@ -92,77 +96,116 @@ export default function FriendsPage() {
     <main className="page-container">
       <div className="card">
         <h1 className="page-title">Friends</h1>
+        <p className="page-subtitle">
+          Add friends using their user ID for now, manage pending requests, and
+          view your current friend list.
+        </p>
 
         {error && <p className="auth-error">{error}</p>}
 
-        <section style={{ marginBottom: "1.5rem" }}>
-          <h2>Send Friend Request</h2>
-          <p style={{ fontSize: "0.9rem" }}>
-            Enter the other user&apos;s ID for now (later we can search by
-            name/email).
+        <section style={{ marginBottom: "1.75rem" }}>
+          <h2 className="section-title">Send friend request</h2>
+          <p className="section-subtitle">
+            Paste another user&apos;s ID (MongoDB _id). Later, we can support
+            searching by name or email.
           </p>
-          <form
-            onSubmit={handleSendRequest}
-            style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
-          >
-            <input
-              type="text"
-              placeholder="Opponent userId (Mongo _id)"
-              value={newFriendId}
-              onChange={(e) => setNewFriendId(e.target.value)}
-            />
-            <button type="submit" disabled={loading}>
-              {loading ? "Sending..." : "Send Request"}
+
+          <form className="form-grid" onSubmit={handleSendRequest}>
+            <div className="form-field">
+              <label className="form-label">Friend user ID</label>
+              <input
+                className="form-input"
+                type="text"
+                placeholder="Opponent userId (Mongo _id)"
+                value={newFriendId}
+                onChange={(e) => setNewFriendId(e.target.value)}
+              />
+            </div>
+
+            <button type="submit" className="btn-primary" disabled={loading}>
+              {loading ? "Sending…" : "Send request"}
             </button>
           </form>
         </section>
 
-        <section style={{ marginBottom: "1.5rem" }}>
-          <h2>Friend Requests</h2>
+        <section style={{ marginBottom: "1.75rem" }}>
+          <h2 className="section-title">Friend requests</h2>
           {requests.length === 0 ? (
-            <p>No friend requests yet.</p>
+            <p className="section-subtitle">No friend requests yet.</p>
           ) : (
-            <ul>
-              {requests.map((r) => (
-                <li key={r._id}>
-                  <strong>Status:</strong> {r.status}{" "}
-                  <br />
-                  <span>From: {r.fromUserId?.displayName || r.fromUserId}</span>
-                  <br />
-                  <span>To: {r.toUserId?.displayName || r.toUserId}</span>
-                  <br />
-                  {r.status === "pending" && (
-                    <div style={{ marginTop: "0.25rem" }}>
-                      <button
-                        onClick={() => handleRespond(r._id, "accept")}
-                        disabled={loading}
-                      >
-                        Accept
-                      </button>
-                      <button
-                        onClick={() => handleRespond(r._id, "decline")}
-                        disabled={loading}
-                        style={{ marginLeft: "0.5rem" }}
-                      >
-                        Decline
-                      </button>
+            <ul className="item-list">
+              {requests.map((r) => {
+                const isIncoming =
+                  String(idOf(r.toUserId)) === String(currentUserId);
+
+                return (
+                  <li key={r._id} className="item-row">
+                    <div className="item-row-header">
+                      <span className="item-row-meta">Status: {r.status}</span>
+
+                      {r.status === "pending" && (
+                        <span className="status-pill status-pill--waiting">
+                          {isIncoming ? "Incoming" : "Outgoing"}
+                        </span>
+                      )}
                     </div>
-                  )}
-                </li>
-              ))}
+
+                    <div className="item-row-meta">
+                      From: {r.fromUserId?.displayName || idOf(r.fromUserId)}
+                      <br />
+                      To: {r.toUserId?.displayName || idOf(r.toUserId)}
+                    </div>
+
+                    {r.status === "pending" && isIncoming && (
+                      <div
+                        style={{
+                          marginTop: "0.5rem",
+                          display: "flex",
+                          gap: "0.5rem",
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        <button
+                          type="button"
+                          className="btn-primary"
+                          onClick={() => handleRespond(r._id, "accept")}
+                          disabled={loading}
+                        >
+                          Accept
+                        </button>
+                        <button
+                          type="button"
+                          className="btn-secondary"
+                          onClick={() => handleRespond(r._id, "decline")}
+                          disabled={loading}
+                        >
+                          Decline
+                        </button>
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </section>
 
         <section>
-          <h2>My Friends</h2>
+          <h2 className="section-title">My friends</h2>
           {friends.length === 0 ? (
-            <p>No friends yet.</p>
+            <p className="section-subtitle">No friends yet.</p>
           ) : (
-            <ul>
+            <ul className="item-list">
               {friends.map((f) => (
-                <li key={f._id}>
-                  {f.displayName} ({f.email}) – id: <code>{f._id}</code>
+                <li key={f._id} className="item-row">
+                  <div className="item-row-header">
+                    <span>
+                      {f.displayName} ({f.email})
+                    </span>
+                  </div>
+                  <div className="item-row-meta">
+                    id: <code>{f._id}</code>
+                  </div>
                 </li>
               ))}
             </ul>

@@ -49,7 +49,6 @@ export default function GamesPage() {
       setLoading(true);
       setError("");
 
-      // Example: await createGame(auth.token, friendUserId);
       const newGame = await createGame(token, opponentId.trim());
       setOpponentId("");
       setGames((prev) => [newGame, ...prev]);
@@ -60,47 +59,86 @@ export default function GamesPage() {
     }
   };
 
+  const statusClass = (status) => {
+    switch (status) {
+      case "waiting":
+        return "status-pill status-pill--waiting";
+      case "active":
+        return "status-pill status-pill--active";
+      case "finished":
+        return "status-pill status-pill--finished";
+      default:
+        return "status-pill";
+    }
+  };
+
+  
+
   return (
     <main className="page-container">
       <div className="card">
         <h1 className="page-title">Games</h1>
+        <p className="page-subtitle">
+          Start a new game against a friend and see all your current and
+          finished games.
+        </p>
 
         {error && <p className="auth-error">{error}</p>}
 
-        <section style={{ marginBottom: "1.5rem" }}>
-          <h2>Start a New Game</h2>
-          <p style={{ fontSize: "0.9rem" }}>
-            For now, paste your friend&apos;s userId (Mongo _id) here.
+        <section style={{ marginBottom: "1.75rem" }}>
+          <h2 className="section-title">Start a new game</h2>
+          <p className="section-subtitle">
+            For now, paste your friend&apos;s user ID (MongoDB _id). Later we can
+            choose from your friends list.
           </p>
-          <form
-            onSubmit={handleCreateGame}
-            style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
-          >
-            <input
-              type="text"
-              placeholder="Friend's userId"
-              value={opponentId}
-              onChange={(e) => setOpponentId(e.target.value)}
-            />
-            <button type="submit" disabled={loading}>
-              {loading ? "Creating..." : "Create Game"}
+
+          <form className="form-grid" onSubmit={handleCreateGame}>
+            <div className="form-field">
+              <label className="form-label">Friend user ID</label>
+              <input
+                className="form-input"
+                type="text"
+                placeholder="Friend's userId"
+                value={opponentId}
+                onChange={(e) => setOpponentId(e.target.value)}
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="btn-primary"
+              disabled={loading}
+            >
+              {loading ? "Creating…" : "Create game"}
             </button>
           </form>
         </section>
 
         <section>
-          <h2>My Games</h2>
+          <h2 className="section-title">My games</h2>
           {games.length === 0 ? (
-            <p>No games yet.</p>
+            <p className="section-subtitle">
+              You don&apos;t have any games yet.
+            </p>
           ) : (
-            <ul>
+            <ul className="item-list">
               {games.map((g) => (
-                <li key={g._id}>
-                  <span>
-                    Game <code>{g._id}</code> – status: <strong>{g.status}</strong>
-                  </span>{" "}
-                  &nbsp;
-                  <Link to={`/games/${g._id}`}>Open</Link>
+                <li key={g._id} className="item-row">
+                  <div className="item-row-header">
+                    <span>Game {g._id}</span>
+                    <span className={statusClass(g.status)}>
+                      {g.status}
+                    </span>
+                  </div>
+                  <div className="item-row-meta">
+                    Last updated:{" "}
+                    {g.updatedAt
+                      ? new Date(g.updatedAt).toLocaleString()
+                      : "unknown"}
+                  </div>
+                  <div style={{ marginTop: "0.4rem" }}>
+                    <Link to={`/games/${g._id}`}>Open game</Link>
+                  </div>
                 </li>
               ))}
             </ul>

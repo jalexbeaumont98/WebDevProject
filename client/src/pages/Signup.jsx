@@ -33,51 +33,66 @@ export default function Signup() {
 
     return (
         <div className="auth-page">
-            <h1>Sign Up</h1>
+            <div className="auth-card">
+                <h1 className="auth-title">Create your Guessr account</h1>
+                <p className="auth-subtitle">
+                    Choose a display name, then sign in to start playing with friends.
+                </p>
 
-            <form onSubmit={handleSubmit} style={{ width: "100%" }}>
-                <div style={{ display: "flex", flexDirection: "column", width: "100%", gap: "0.5rem" }}>
-
-                    <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
-                        <label>Display Name</label>
-                        <input
-                            type="text"
-                            value={displayName}
-                            onChange={(e) => setDisplayName(e.target.value)}
-                            style={{ padding: "8px", width: "100%" }}
-                        />
-                    </div>
-
-                    <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
-                        <label>Email</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            style={{ padding: "8px", width: "100%" }}
-                        />
-                    </div>
-
-                    <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
-                        <label>Password</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            style={{ padding: "8px", width: "100%" }}
-                        />
-                    </div>
-
-                    <button style={{ width: "100%", padding: "10px", marginTop: "0.5rem" }}>
-                        Sign Up
-                    </button>
+                <form className="auth-form" onSubmit={handleSubmit}>
+                <div className="form-field">
+                    <label className="form-label">Display name</label>
+                    <input
+                    className="form-input"
+                    type="text"
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    />
                 </div>
+
+                <div className="form-field">
+                    <label className="form-label">Email</label>
+                    <input
+                    className="form-input"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="email"
+                    />
+                </div>
+
+                <div className="form-field">
+                    <label className="form-label">Password</label>
+                    <input
+                    className="form-input"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    autoComplete="new-password"
+                    />
+                </div>
+
+                {error && <p className="auth-error">{error}</p>}
+                {successMsg && (
+                    <p style={{ color: "#bbf7d0", fontSize: "0.9rem", margin: 0 }}>
+                    {successMsg}
+                    </p>
+                )}
+
+                <button
+                    type="submit"
+                    className="btn-primary"
+                    disabled={loading}
+                >
+                    {loading ? "Creating account…" : "Sign up"}
+                </button>
             </form>
 
-            <p className="auth-switch">
-                Already have an account?{' '}
+            <div className="auth-footer">
+                Already have an account?{" "}
                 <Link to="/login">Sign in</Link>
-            </p>
+            </div>
         </div>
-    );
+    </div>
+  );
 }

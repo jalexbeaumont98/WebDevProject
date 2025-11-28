@@ -31,66 +31,51 @@ export default function Login() {
     }
   };
 
-  return (
+ return (
     <div className="auth-page">
-      <h1 className="auth-title">Sign In</h1>
-      <div className="auth-underline" />
+      <div className="auth-card">
+        <h1 className="auth-title">Sign in to Guessr</h1>
+        <p className="auth-subtitle">
+          Enter your email and password to access your games.
+        </p>
 
-      <form
-        className="auth-form"
-        onSubmit={handleSubmit}
-        style={{
-          width: "100%",
-          maxWidth: "400px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "1rem",
-          alignItems: "center",
-        }}
-      >
-        {/* Email */}
-        <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
-          <label>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-            style={{ padding: "8px", width: "100%" }}
-          />
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="form-field">
+            <label className="form-label">Email</label>
+            <input
+              className="form-input"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="email"
+            />
+          </div>
+
+          <div className="form-field">
+            <label className="form-label">Password</label>
+            <input
+              className="form-input"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              autoComplete="current-password"
+            />
+          </div>
+
+          {error && <p className="auth-error">{error}</p>}
+
+          <button type="submit" className="btn-primary" disabled={loading}>
+            {loading ? "Signing in…" : "Sign in"}
+          </button>
+        </form>
+
+        <div className="auth-footer">
+          Don&apos;t have an account?{" "}
+          <Link to="/signup">Create one</Link>
         </div>
-
-        {/* Password */}
-        <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
-          <label>Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-            style={{ padding: "8px", width: "100%" }}
-          />
-        </div>
-
-        {error && (
-          <p className="auth-error" style={{ color: "red", margin: 0 }}>
-            {error}
-          </p>
-        )}
-
-        <button
-          type="submit"
-          disabled={loading}
-          style={{ width: "100%", padding: "10px" }}
-        >
-          {loading ? "Signing in…" : "Sign In"}
-        </button>
-      </form>
-
-      <p style={{ marginTop: "1rem", textAlign: "center" }}>
-        Don’t have an account?{" "}
-        <Link to="/signup">Sign up</Link>
-      </p>
+      </div>
     </div>
   );
 }
