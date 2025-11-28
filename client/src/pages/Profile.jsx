@@ -1,5 +1,4 @@
 // client/src/pages/Profile.jsx
-import React from "react";
 import { useAuth } from "../context/AuthContext";
 
 /*
@@ -13,24 +12,50 @@ export default function Profile() {
 
   if (!auth?.user) {
     return (
-      <div className="page-container">
-        <div className="page-content">
-          <h1>Profile</h1>
-          <p>Loading user info...</p>
+      <main className="page-container">
+        <div className="card">
+          <h1 className="page-title">Profile</h1>
+          <p className="page-subtitle">Loading user info...</p>
         </div>
-      </div>
+      </main>
     );
   }
 
-  const { displayName, email } = auth.user;
+  const { displayName, email, _id } = auth.user;
 
   return (
-    <div className="page-container">
-      <div className="page-content">
-        <h1>Your Profile</h1>
-        <p><strong>Name:</strong> {displayName}</p>
-        <p><strong>Email:</strong> {email}</p>
+    <main className="page-container">
+      <div className="card">
+        <h1 className="page-title">Your profile</h1>
+        <p className="page-subtitle">
+          This is the account you use to play Guessr and connect with friends.
+        </p>
+
+        <div className="item-list">
+          <div className="item-row">
+            <div className="item-row-header">
+              <span className="item-row-meta">Display name</span>
+            </div>
+            <div>{displayName || "(not set)"}</div>
+          </div>
+
+          <div className="item-row">
+            <div className="item-row-header">
+              <span className="item-row-meta">Email</span>
+            </div>
+            <div>{email}</div>
+          </div>
+
+          <div className="item-row">
+            <div className="item-row-header">
+              <span className="item-row-meta">User ID</span>
+            </div>
+            <div>
+              <code>{_id}</code>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
