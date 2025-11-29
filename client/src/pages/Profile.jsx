@@ -21,10 +21,11 @@ export default function Profile() {
     );
   }
 
-  const { displayName, email, _id } = auth.user;
+  const { name, email, _id } = auth.user;
 
   return (
     <main className="page-container">
+      
       <div className="card">
         <h1 className="page-title">Your profile</h1>
         <p className="page-subtitle">
@@ -36,7 +37,7 @@ export default function Profile() {
             <div className="item-row-header">
               <span className="item-row-meta">Display name</span>
             </div>
-            <div>{displayName || "(not set)"}</div>
+            <div>{name || "(not set)"}</div>
           </div>
 
           <div className="item-row">

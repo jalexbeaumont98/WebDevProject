@@ -1,6 +1,8 @@
 import { useEffect } from "react"
 import { Link } from "react-router-dom"
 import { useAuth } from "../context/AuthContext";
+import grouplogo from "../assets/group7software_blue.png";
+import logo from "../assets/guessr_logo.png";
 
 /*
 
@@ -24,6 +26,9 @@ export default function Home() {
   return (
     <main className="page-container">
       <div className="card home-card">
+        
+        
+        <img src={logo} alt="Guessr logo" className="group-img" />
         <div className="home-header">
           <h1 className="page-title">Welcome, {name}</h1>
           <p className="page-subtitle">
@@ -52,6 +57,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      
     </main>
   );
 }
