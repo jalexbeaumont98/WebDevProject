@@ -15,9 +15,14 @@ export const signup = async (req, res) => {
         .json({ error: 'display/name, email and password are required' });
     }
 
-    const existing = await User.findOne({ email });
-    if (existing) {
+    const existingEmail = await User.findOne({ email });
+    if (existingEmail) {
       return res.status(400).json({ error: 'Email already exists' });
+    }
+
+    const existingDisplayName = await User.findOne({ displayName: display });
+    if (existingDisplayName) {
+      return res.status(400).json({ error: 'Display Name already exists' });
     }
 
     const user = new User({

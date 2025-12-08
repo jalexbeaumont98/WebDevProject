@@ -83,3 +83,24 @@ export const removeAll = async (req, res, next) => {
     next(err);
   }
 };
+
+export const findByDisplayName = async (req, res, next) => {
+  try {
+    const { displayName } = req.params;
+
+    if (!displayName) {
+      return res.status(400).json({ error: 'displayName is required' });
+    }
+
+    // Because displayName is unique, findOne is fine
+    const user = await User.findOne({ displayName }).select('_id displayName email');
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json(user);
+  } catch (err) {
+    next(err);
+  }
+};
