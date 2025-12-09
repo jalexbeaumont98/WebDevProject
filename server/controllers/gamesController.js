@@ -173,10 +173,6 @@ export const makeGuess = async (req, res, next) => {
   try {
     const userId = req.auth._id;
 
-
-    // Debug: see what the client actually sent
-    console.log("makeGuess req.body:", req.body);
-
     // Coerce to number
     const raw = req.body?.value ?? req.body?.guess;
 

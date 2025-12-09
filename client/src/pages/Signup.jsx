@@ -44,6 +44,7 @@ export default function Signup() {
                     <label className="form-label">Display name</label>
                     <input
                     className="form-input"
+                    data-cy="signup-name"
                     type="text"
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
@@ -54,6 +55,7 @@ export default function Signup() {
                     <label className="form-label">Email</label>
                     <input
                     className="form-input"
+                    data-cy="signup-email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -65,6 +67,7 @@ export default function Signup() {
                     <label className="form-label">Password</label>
                     <input
                     className="form-input"
+                    data-cy="signup-password"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -81,6 +84,7 @@ export default function Signup() {
 
                 <button
                     type="submit"
+                    data-cy="signup-submit"
                     className="btn-primary"
                     disabled={loading}
                 >

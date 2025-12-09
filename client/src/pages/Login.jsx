@@ -44,6 +44,7 @@ export default function Login() {
             <label className="form-label">Email</label>
             <input
               className="form-input"
+              data-cy="login-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -56,6 +57,7 @@ export default function Login() {
             <label className="form-label">Password</label>
             <input
               className="form-input"
+              data-cy="login-password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -66,7 +68,8 @@ export default function Login() {
 
           {error && <p className="auth-error">{error}</p>}
 
-          <button type="submit" className="btn-primary" disabled={loading}>
+          <button type="submit" className="btn-primary" disabled={loading} data-cy="login-submit">
+            
             {loading ? "Signing in…" : "Sign in"}
           </button>
         </form>

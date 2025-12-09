@@ -61,10 +61,11 @@ export default function Navbar() {
                 <div className="nav-user-avatar">
                   {userName.charAt(0).toUpperCase()}
                 </div>
-                <span className="nav-user-name">{userName}</span>
+                <span className="nav-username" data-cy="nav-username">{userName}</span>
               </div>
               <button
                 type="button"
+                data-cy="nav-logout"
                 className="btn-nav-ghost"
                 onClick={handleLogout}
               >
