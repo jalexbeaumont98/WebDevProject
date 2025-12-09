@@ -10,6 +10,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { getUserByDisplayName } from "../api/users";
 import {
   listFriends,
   listRequests,
@@ -54,14 +55,22 @@ export default function FriendsPage() {
   const handleSendRequest = async (e) => {
     e.preventDefault();
     if (!newFriendId.trim()) return;
+
     try {
       setLoading(true);
       setError("");
 
-      // Example: await sendRequest(auth.token, toUserId);
-      await sendRequest(token, newFriendId.trim());
+      const friendUser = await getUserByDisplayName(token, newFriendId.trim());
+
+      if (!friendUser?._id) {
+        setError("User not found.");
+        return;
+      }
+
+      await sendRequest(token, friendUser._id);
 
       setNewFriendId("");
+
       const updated = await listRequests(token);
       setRequests(updated);
     } catch (err) {
@@ -92,12 +101,16 @@ export default function FriendsPage() {
     }
   };
 
+  const pendingOrDeclinedRequests = requests.filter(
+    (r) => r.status !== "accepted"
+  );
+
   return (
     <main className="page-container">
       <div className="card">
         <h1 className="page-title">Friends</h1>
         <p className="page-subtitle">
-          Add friends using their user ID for now, manage pending requests, and
+          Add friends, manage pending requests, and
           view your current friend list.
         </p>
 
@@ -106,17 +119,16 @@ export default function FriendsPage() {
         <section style={{ marginBottom: "1.75rem" }}>
           <h2 className="section-title">Send friend request</h2>
           <p className="section-subtitle">
-            Paste another user&apos;s ID (MongoDB _id). Later, we can support
-            searching by name or email.
+            Find your friends using their display name.
           </p>
 
           <form className="form-grid" onSubmit={handleSendRequest}>
             <div className="form-field">
-              <label className="form-label">Friend user ID</label>
+              <label className="form-label"></label>
               <input
                 className="form-input"
                 type="text"
-                placeholder="Opponent userId (Mongo _id)"
+                placeholder="Display Name"
                 value={newFriendId}
                 onChange={(e) => setNewFriendId(e.target.value)}
               />
@@ -130,11 +142,11 @@ export default function FriendsPage() {
 
         <section style={{ marginBottom: "1.75rem" }}>
           <h2 className="section-title">Friend requests</h2>
-          {requests.length === 0 ? (
+          {pendingOrDeclinedRequests.length === 0 ? (
             <p className="section-subtitle">No friend requests yet.</p>
           ) : (
             <ul className="item-list">
-              {requests.map((r) => {
+              {pendingOrDeclinedRequests.map((r) => {
                 const isIncoming =
                   String(idOf(r.toUserId)) === String(currentUserId);
 
@@ -202,9 +214,6 @@ export default function FriendsPage() {
                     <span>
                       {f.displayName} ({f.email})
                     </span>
-                  </div>
-                  <div className="item-row-meta">
-                    id: <code>{f._id}</code>
                   </div>
                 </li>
               ))}

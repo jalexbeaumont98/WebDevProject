@@ -19,12 +19,14 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { listGames, createGame } from "../api/games";
+import { listFriends } from "../api/friends";
 
 export default function GamesPage() {
   const { auth } = useAuth();
   const token = auth?.token;
 
   const [games, setGames] = useState([]);
+  const [friends, setFriends] = useState([]);
   const [opponentId, setOpponentId] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -34,8 +36,17 @@ export default function GamesPage() {
     (async () => {
       try {
         setError("");
-        const data = await listGames(token);
-        setGames(data || []);
+        const [gamesData, friendsData] = await Promise.all([
+          listGames(token),
+          listFriends(token),
+        ]);
+
+        setGames(gamesData || []);
+
+        const friendArray = Array.isArray(friendsData)
+          ? friendsData
+          : friendsData?.friends || [];
+        setFriends(friendArray);
       } catch (err) {
         setError(err.message || "Failed to load games");
       }
@@ -72,7 +83,30 @@ export default function GamesPage() {
     }
   };
 
-  
+  const getOpponentName = (game) => {
+    const me = auth?.user?._id;
+
+    const idOf = (v) =>
+      v && typeof v === "object" ? v._id : v;
+
+    const pA = game.playerA;
+    const pB = game.playerB;
+
+    // Decide who is the opponent
+    const opponent =
+      String(idOf(pA)) === String(me) ? pB : pA;
+
+    if (!opponent) return "Unknown";
+
+    return (
+      opponent.displayName ||
+      opponent.name ||
+      opponent.email ||
+      "Unknown"
+    );
+  };
+
+
 
   return (
     <main className="page-container">
@@ -88,20 +122,24 @@ export default function GamesPage() {
         <section style={{ marginBottom: "1.75rem" }}>
           <h2 className="section-title">Start a new game</h2>
           <p className="section-subtitle">
-            For now, paste your friend&apos;s user ID (MongoDB _id). Later we can
-            choose from your friends list.
+            Choose a friend from your friends list to start a new game.
           </p>
 
           <form className="form-grid" onSubmit={handleCreateGame}>
             <div className="form-field">
-              <label className="form-label">Friend user ID</label>
-              <input
+              <label className="form-label">Friend</label>
+              <select
                 className="form-input"
-                type="text"
-                placeholder="Friend's userId"
                 value={opponentId}
                 onChange={(e) => setOpponentId(e.target.value)}
-              />
+              >
+                <option value="">Select a friend…</option>
+                {friends.map((f) => (
+                  <option key={f._id} value={f._id}>
+                    {f.displayName || f.name || f.email}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <button
@@ -122,25 +160,31 @@ export default function GamesPage() {
             </p>
           ) : (
             <ul className="item-list">
-              {games.map((g) => (
-                <li key={g._id} className="item-row">
-                  <div className="item-row-header">
-                    <span>Game {g._id}</span>
-                    <span className={statusClass(g.status)}>
-                      {g.status}
-                    </span>
-                  </div>
-                  <div className="item-row-meta">
-                    Last updated:{" "}
-                    {g.updatedAt
-                      ? new Date(g.updatedAt).toLocaleString()
-                      : "unknown"}
-                  </div>
-                  <div style={{ marginTop: "0.4rem" }}>
-                    <Link to={`/games/${g._id}`}>Open game</Link>
-                  </div>
-                </li>
-              ))}
+              {games.map((g) => {
+                console.log("Game row:", g);   // <-- add this line
+
+                return (
+                  <li key={g._id} className="item-row">
+                    <div className="item-row-header">
+                      <span>Game vs {getOpponentName(g)}</span>
+                      <span className={statusClass(g.status)}>
+                        {g.status}
+                      </span>
+                    </div>
+
+                    <div className="item-row-meta">
+                      Last updated:{" "}
+                      {g.updated || g.updatedAt
+                        ? new Date(g.updated || g.updatedAt).toLocaleString()
+                        : "unknown"}
+                    </div>
+
+                    <div style={{ marginTop: "0.4rem" }}>
+                      <Link to={`/games/${g._id}`}>Open game</Link>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </section>

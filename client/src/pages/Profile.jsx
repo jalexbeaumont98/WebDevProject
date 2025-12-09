@@ -46,15 +46,6 @@ export default function Profile() {
             </div>
             <div>{email}</div>
           </div>
-
-          <div className="item-row">
-            <div className="item-row-header">
-              <span className="item-row-meta">User ID</span>
-            </div>
-            <div>
-              <code>{_id}</code>
-            </div>
-          </div>
         </div>
       </div>
     </main>

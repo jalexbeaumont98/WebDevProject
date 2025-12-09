@@ -9,6 +9,7 @@ import {
   // auth-aware helpers:
   create as registerUser,   // optional “signup” endpoint
   userByID,
+  findByDisplayName, 
   read
 } from '../controllers/usersController.js';
 import { requireSignin, hasAuthorization } from '../controllers/authController.js';
@@ -26,7 +27,14 @@ router.put('/:id', updateById);
 router.delete('/:id', removeById);
 router.delete('/', removeAll);
 
+
 router.get('/profile/:userId', requireSignin, hasAuthorization, read);
+
+router.get(
+  '/by-display-name/:displayName',
+  requireSignin,           
+  findByDisplayName
+);
 
 /** Bind :userId for the profile route */
 router.param('userId', userByID);
