@@ -9,7 +9,10 @@ export const listMine = async (req, res, next) => {
     const userId = req.auth._id;
     const docs = await Game.find({
       $or: [{ playerA: userId }, { playerB: userId }]
-    }).sort({ updated: -1 });
+    }).sort({ updated: -1 })
+      .populate('playerA', 'displayName email')
+      .populate('playerB', 'displayName email');
+
     res.json(docs);
   } catch (e) {
     next(e);
@@ -106,7 +109,7 @@ export const setSecret = async (req, res, next) => {
         .json({ message: 'Secret value must be a number' });
     }
 
-    
+
     if (num < 1 || num > 100) {
       return res
         .status(400)
@@ -170,7 +173,7 @@ export const makeGuess = async (req, res, next) => {
   try {
     const userId = req.auth._id;
 
-    
+
     // Debug: see what the client actually sent
     console.log("makeGuess req.body:", req.body);
 
