@@ -1,7 +1,7 @@
 // server/routes/friendsRoutes.js
 import { Router } from 'express';
 import { requireSignin } from '../controllers/authController.js';
-import { listFriends } from '../controllers/friendRequestsController.js';
+import { listFriends,  } from '../controllers/friendRequestsController.js';
 
 const router = Router();
 

@@ -38,7 +38,7 @@ export async function createGame(token, opponentId) {
   const res = await fetch(`${API_BASE}/api/games`, {
     method: "POST",
     headers: authHeaders(token),
-    body: JSON.stringify({ opponentId }), // range is optional in backend
+    body: JSON.stringify({ opponentId }), 
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
